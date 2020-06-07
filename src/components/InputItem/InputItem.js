@@ -1,61 +1,57 @@
-import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import React, {useState} from 'react';
+import classnames from 'classnames';
+import styles from './InputItem.module.css';
 
-class InputItem extends React.Component {
-	state = {
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import IconButton from '@material-ui/core/IconButton';
+
+import Tooltip from '../Tooltip/Tooltip.js';
+
+const InputItem = ({onClickAdd, checkItems}) => {
+	const initialState = {
 		inputValue: '',
-		labelValue: "Добавить задачу",
-		noValue: false
+		labelValue: 'Добавить задачу',
+		noValue: false,
+		error: false,
 	};
 
-	onButtonClick = () => {
-		this.setState ({
-			inputValue: ''
-		});
+	const [inputValue, setInputValue] = useState(initialState.inputValue);
+	const [labelValue] = useState(initialState.labelValue);
+	const [noValue, setNoValue] = useState(initialState.setNoValue);
+	const [error, setError] = useState(initialState.setError);
 
-		if ( this.state.inputValue === ''){
-			this.setState ({
-			labelValue: "Вы не ввели значение!",
-			noValue: true
-			
-		});
+
+	const onButtonClick = () => {
+		if (checkItems(inputValue) === 'error') {
+			setError(true)
+		} else if ( inputValue === '') {
+			setNoValue(true);
+			setError(true);
 		} else {
-			this.setState ({
-			labelValue: "Добавить задачу",
-			noValue: false
-			
-		});
-
-		this.props.onClickAdd(this.state.inputValue);
+			setInputValue('');
+			setError(false);
+			onClickAdd(inputValue);
 		}
 	}
 
-	render () {
-		
-		return (
-			<div>
-				<TextField
-			    	error={this.state.noValue}
-			    	id="standard-dense"
-			    	label={this.state.labelValue}
-			    	margin="dense"
-			    	fullWidth
-			    	value={this.state.inputValue}
-			    	onChange={event => this.setState({ inputValue: event.target.value.toUpperCase() })}
-			    />
-			    <Button
-			    	variant='contained'
-			    	color='primary'
-			    	fullWidth
-			    	onClick={ this.onButtonClick }
-			    >
-			    	Добавить
-			    </Button>	
-			</div>);
-	}
+	const onClickEnter = (event) => { if (event.keyCode === 13) {onButtonClick()} };
+
+	return (
+		<div className={styles.wrap}>
+			{error === true && <Tooltip noValue={noValue} />}
+			<input 
+				className = {
+					classnames({
+						[styles.input]: true,
+						[styles.error]: noValue || error,
+					})}
+				placeholder={labelValue}
+				value={inputValue}
+				onChange={event => { setInputValue(event.target.value); setNoValue(false); setError(false)}}
+				onKeyUp={onClickEnter}/>
+			<IconButton size='small'  onClick={onButtonClick}><AddCircleIcon color='primary' fontSize='large' /></IconButton>
+		</div>
+	)
 }
-
-
 
 export default InputItem;

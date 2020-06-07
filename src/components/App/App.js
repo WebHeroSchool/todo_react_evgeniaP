@@ -1,29 +1,33 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 
 import Todo from '../Todo/Todo';
 import About from '../About/About';
-import Contacts from '../Contacts/Contacts';
-import styles from './App.module.css';
+import Footer from '../Footer/Footer';
 
-const App = () =>
-(<Router>
-	<div className={styles.wrapper}>
-		<div className={styles.sidebar}>
-			<MenuList>
-				<Link to='/' className={styles.link}><MenuItem>Обо мне</MenuItem></Link>
-				<Link to='/todo' className={styles.link}><MenuItem>Мои задачи</MenuItem></Link>
-				<Link to='/contacts' className={styles.link}><MenuItem>Мои контакты</MenuItem></Link>
-			</MenuList>
-		</div>
-		<div className={styles.wrap}>
+import styles from './App.module.css';
+import '../../fonts/fonts.css';
+
+const App = () => {
+
+return(<Router>
+	<div className={styles.wrap}>
+	<div className={styles.inner}>
+		<nav className={styles.nav}>
+			<NavLink exact to='/'
+				className={styles.link}
+				activeClassName={styles.linkActive}>Обо мне</NavLink>
+			<NavLink to='/todo'
+				className={styles.link}
+				activeClassName={styles.linkActive}>Мои задачи</NavLink>
+		</nav>
+		<div className={styles.content}>
 			<Route path='/' exact component={About} />
 			<Route path='/todo' component={Todo} />
-			<Route path='/contacts' component={Contacts} />
 		</div>
+		<Footer />
 	</div>
-</Router>)
+	</div>
+</Router>)}
 
 export default App;

@@ -1,31 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import classnames from 'classnames';
 import styles from './Item.module.css';
+
 import Checkbox from '@material-ui/core/Checkbox';
-import DeleteIcon from '@material-ui/icons/Delete';
+import CancelSharpIcon from '@material-ui/icons/CancelSharp';
+import RadioButtonUncheckedSharpIcon from '@material-ui/icons/RadioButtonUncheckedSharp';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import IconButton from '@material-ui/core/IconButton';
 
-class Item extends React.Component {
+import EditedItem from '../EditedItem/EditedItem.js';
 
-	render () {
-
-		const { value, isDone, id, onClickDone, onClickDelete } = this.props;
-
-		return (<span className= {
-		classnames({
-			[styles.item]: true,
-			[styles.done]: isDone
-	})}>
-		<Checkbox checked= {isDone} onClick= {() => onClickDone(id)} />
-		{value}
-		<div className={styles.delete}>
-			<IconButton onClick= {() => onClickDelete(id)}>
-          		<DeleteIcon fontSize="small" />
-        	</IconButton>
-        </div>
-    </span>);
-	}
+const Item = ({ value, isDone, id, onClickDone, onClickDelete, onItemDoubleClick, isEdited, changeItem, checkItems }) => {
+	return (
+		<div 
+            className={
+	       	  	classnames({
+	       	  		[styles.item]: true,
+	       	  		[styles.done]: isDone,
+                    [styles.editedItem]: isEdited,})}
+        >
+			{!isEdited && <Checkbox
+                icon={<RadioButtonUncheckedSharpIcon fontSize='small' />}
+                checkedIcon={<CheckCircleIcon fontSize='small' />}
+                color='primary'
+                checked={isDone}
+                onClick={() => onClickDone(id)}
+            />}
+          	<div className={styles.value} onDoubleClick={(event) => onItemDoubleClick(value, id, event)}>
+          	    { !isEdited && value }
+                {isEdited && <EditedItem  value={value} changeItem={changeItem} checkItems={checkItems} id={id} />}
+          	</div>		
+			{!isEdited && <div className={styles.delete}>
+                <IconButton  onClick={() => onClickDelete(id)}>
+                    <CancelSharpIcon fontSize='small' />
+                </IconButton>
+            </div>}
+   		</div>
+   	)
 }
 
 
@@ -36,7 +49,7 @@ Item.defaultProps = {
 Item.propTypes = {
 	value: PropTypes.string.isRequired,
 	isDone: PropTypes.bool.isRequired,
-	id: PropTypes.number.isRequired,
+	id: PropTypes.string.isRequired,
 	onClickDone: PropTypes.func,
 	onClickDelete: PropTypes.func
 };
